@@ -18,7 +18,7 @@ export default function ProductDetail(){
     }
     const classes = UseStyles();
     return(
-        <Layout title={product.name}>
+        <Layout title={product.name} description={product.description}>
            <div className={classes.section}>
              <NextLink href="/" passHref>
                 <Link>
@@ -32,7 +32,7 @@ export default function ProductDetail(){
              <Grid item md={3} xs={12}>
                 <List>
                     <ListItem>
-                        <Typography>Category: {product.category}</Typography>
+                        <Typography component="h1" variant="h1">Category: {product.category}</Typography>
                     </ListItem>
                     <ListItem>
                         <Typography>Brand: {product.brand}</Typography>
