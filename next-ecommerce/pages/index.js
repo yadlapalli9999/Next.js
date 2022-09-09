@@ -4,9 +4,12 @@ import Image from 'next/image'
 import Layout from '../components/Layout'
 import NextLink from 'next/link';
 import styles from '../styles/Home.module.css'
-import data from '../utils/data'
+// import data from '../utils/data'
+import db from '../utils/db';
+import Product from '../model/Product';
 
-export default function Home() {
+export default function Home(props) {
+  let {products} =props;
   return (
     <Layout>
       <div className={styles.container}>
@@ -19,7 +22,7 @@ export default function Home() {
         <h1>Products</h1>
         <Grid container spacing={3}>
           {
-            data.products.map((product)=>(
+            products.map((product)=>(
               <Grid item md={4} key={product.name}>
                 <Card>
                   <NextLink href={`/product/${product.slug}`} passHref>
@@ -45,4 +48,15 @@ export default function Home() {
     </Layout>
     
   )
+}
+export async function getServerSideProps(){
+  await db.connect()
+  const products = await Product.find({}).lean();
+  await db.disconnect()
+  return {
+    props:{
+      //products
+      products:products.map(db.convertDocToObj)
+    }
+  }
 }
