@@ -1,17 +1,20 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useContext } from "react";
 import NextLink from 'next/link';
 import Image from 'next/image'
 import Layout from "../../components/Layout";
 import data from "../../utils/data";
 import UseStyles from "../../utils/styles";
+import Axios from 'axios';
 import { Link,Grid, List, ListItem, Typography, Card, Button } from "@mui/material";
 import db from "../../utils/db";
 import Product from "../../model/Product";
+import { Store } from "../../utils/Store";
 
 
 
 export default function ProductDetail(props){
+    const {dispatch} = useContext(Store)
     const {product} = props;
     // const router = useRouter();
     //const {slug} = router.query;
@@ -20,6 +23,17 @@ export default function ProductDetail(props){
         return <div>Product Not Found</div>
     }
     const classes = UseStyles();
+    const handleAddToCart = async()=>{
+      const {data} = await Axios.get(`/api/products/${product._id}`);
+    //   dynamic(() => import(), {ssr: false})
+
+      console.log(data)
+      if(data.countInStock <= 0){
+         typeof window.alert('Sorry. Product is out of Stock')
+         return;
+      }
+      dispatch({type:'CART_ADD_ITEM',payload:{...product,quantity : 1}})
+    }
     return(
         <Layout title={product.name} description={product.description}>
            <div className={classes.section}>
@@ -30,7 +44,7 @@ export default function ProductDetail(props){
            </div>
            <Grid container spacing={1}>
              <Grid item md={6} xs={12}>
-                <Image src={product.image} alt={product.name} Layout="responsive" width={640} height={640}/>
+                <Image src={product.image} alt={product.name} layout="responsive" width={640} height={640}/>
              </Grid>
              <Grid item md={3} xs={12}>
                 <List>
@@ -65,7 +79,7 @@ export default function ProductDetail(props){
                             </Grid>
                         </ListItem>
                         <ListItem>
-                            <Button fullWidth variant="contained" color="primary">Add to Cart</Button>
+                            <Button fullWidth variant="contained" color="primary"  onClick={handleAddToCart}>Add to Cart</Button>
                         </ListItem>
                     </List>
                 </Card>
