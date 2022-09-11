@@ -16,13 +16,14 @@ import { Store } from "../../utils/Store";
 export default function ProductDetail(props){
     const {dispatch} = useContext(Store)
     const {product} = props;
-    // const router = useRouter();
+    const router = useRouter();
     //const {slug} = router.query;
     //const product = data.products.find((a)=> a.slug === slug);
     if(!product){
         return <div>Product Not Found</div>
     }
     const classes = UseStyles();
+
     const handleAddToCart = async()=>{
       const {data} = await Axios.get(`/api/products/${product._id}`);
     //   dynamic(() => import(), {ssr: false})
@@ -33,6 +34,7 @@ export default function ProductDetail(props){
          return;
       }
       dispatch({type:'CART_ADD_ITEM',payload:{...product,quantity : 1}})
+      router.push('/cart')
     }
     return(
         <Layout title={product.name} description={product.description}>
