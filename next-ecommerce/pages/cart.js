@@ -10,7 +10,7 @@ import {
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
-export default function Cart() {
+function Cart() {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const {
@@ -138,4 +138,4 @@ export default function Cart() {
   );
 }
 
-// export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });
+export default dynamic(() => Promise.resolve(Cart), { ssr: false });

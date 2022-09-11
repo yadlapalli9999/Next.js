@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useContext } from "react";
+import dynamic from "next/dynamic";
 import NextLink from 'next/link';
 import Image from 'next/image'
 import Layout from "../../components/Layout";
@@ -13,7 +14,7 @@ import { Store } from "../../utils/Store";
 
 
 
-export default function ProductDetail(props){
+function ProductDetail(props){
     const {dispatch} = useContext(Store)
     const {product} = props;
     const router = useRouter();
@@ -102,3 +103,5 @@ export async function getServerSideProps(conetxt){
         }
     }
 }
+
+export default dynamic(()=>Promise.resolve(ProductDetail),{ssr:false})
