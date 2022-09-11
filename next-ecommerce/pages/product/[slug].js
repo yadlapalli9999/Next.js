@@ -15,7 +15,7 @@ import { Store } from "../../utils/Store";
 
 
 function ProductDetail(props){
-    const {dispatch} = useContext(Store)
+    const {dispatch,state} = useContext(Store)
     const {product} = props;
     const router = useRouter();
     //const {slug} = router.query;
@@ -26,15 +26,17 @@ function ProductDetail(props){
     const classes = UseStyles();
 
     const handleAddToCart = async()=>{
-      const {data} = await Axios.get(`/api/products/${product._id}`);
     //   dynamic(() => import(), {ssr: false})
+    let existItem = state.cart.cartItems.find(x => x._id === product._id)
+    let quantity = existItem ? existItem.quantity +1 : 1;
+    const {data} = await Axios.get(`/api/products/${product._id}`);
 
       console.log(data)
-      if(data.countInStock <= 0){
+      if(data.countInStock < quantity){
          typeof window.alert('Sorry. Product is out of Stock')
          return;
       }
-      dispatch({type:'CART_ADD_ITEM',payload:{...product,quantity : 1}})
+      dispatch({type:'CART_ADD_ITEM',payload:{...product,quantity }})
       router.push('/cart')
     }
     return(

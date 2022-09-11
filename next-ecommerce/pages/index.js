@@ -3,13 +3,34 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Layout from '../components/Layout'
 import NextLink from 'next/link';
+import Axios from 'axios';
 import styles from '../styles/Home.module.css'
 // import data from '../utils/data'
 import db from '../utils/db';
 import Product from '../model/Product';
+import { useContext } from 'react';
+import { Store } from '../utils/Store';
+import { useRouter } from 'next/router';
 
 export default function Home(props) {
   let {products} =props;
+  let {state,dispatch} = useContext(Store);
+  let router = useRouter();
+  const handleAddToCart = async(product)=>{
+    let existItem = state.cart.cartItems.find(x => x._id === product._id)
+    let quantity = existItem ? existItem.quantity +1 : 1;
+    const {data} = await Axios.get(`/api/products/${product._id}`);
+  //   dynamic(() => import(), {ssr: false})
+
+    console.log(data)
+    if(data.countInStock < quantity){
+       typeof window.alert('Sorry. Product is out of Stock')
+       return;
+    }
+    
+    dispatch({type:'CART_ADD_ITEM',payload:{...product,quantity}})
+    router.push('/cart')
+  }
   return (
     <Layout>
       <div className={styles.container}>
@@ -36,7 +57,7 @@ export default function Home(props) {
 
                   <CardActions>
                     <Typography>${product.price}</Typography>
-                    <Button size="small" color='primary'>Add To Cart</Button>
+                    <Button size="small" color='primary' onClick={()=>handleAddToCart(product)}>Add To Cart</Button>
                   </CardActions>
                 </Card>
               </Grid>
