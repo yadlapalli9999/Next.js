@@ -1,6 +1,7 @@
 import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, Typography } from '@mui/material'
 import Head from 'next/head'
-import Image from 'next/image'
+import Image from 'next/image';
+import dynamic from 'next/dynamic'
 import Layout from '../components/Layout'
 import NextLink from 'next/link';
 import Axios from 'axios';
@@ -81,3 +82,4 @@ export async function getServerSideProps(){
     }
   }
 }
+//export default dynamic(()=>Promise.resolve(Home),{ssr:false})

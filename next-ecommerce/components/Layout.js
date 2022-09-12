@@ -1,17 +1,36 @@
-import React, { useContext } from "react";
+import React, { useContext,useState } from "react";
 import Head from "next/head";
-import { AppBar, Container, CssBaseline, Link, Switch, ThemeProvider, Toolbar, Typography,Badge } from "@mui/material";
+import { AppBar, Container, CssBaseline, Link, Switch, ThemeProvider, Toolbar, Typography,Badge, Button,Menu,MenuItem } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import NextLink from 'next/link';
 import UseStyles from "../utils/styles";
 import { Store } from "../utils/Store";
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 
 export default function Layout({children,title,description}){
     const {state,dispatch} = useContext(Store);
-    const {darkMode,cart} = state;
+    const {darkMode,cart,userInfo} = state;
+    const router = useRouter();
+    // console.log(JSON.stringify(userInfo.name))
+    const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogoutUser = ()=>{
+    setAnchorEl(null);
+    dispatch({type:'USER_LOGOUT'});
+    Cookies.remove('userInfo');
+    Cookies.remove('cartItems');
+    router.push('/')
     
+  }
     const theme = createTheme({
         typography:{
             h1:{
@@ -67,11 +86,35 @@ export default function Layout({children,title,description}){
                             {cart.cartItems.length > 0? <Badge badgeContent={cart.cartItems.length}>Cart</Badge>:"Cart"}
                             </Link>
                         </NextLink>
-                        <NextLink href="/login" passHref>
+                        {
+                            userInfo?(
+                                <>
+                            <Button className={classes.navbarButton}  id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}>{userInfo.name}</Button>
+                            <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
+      </Menu>
+                            </>
+                            ):(<NextLink href="/login" passHref>
                             <Link>
                                Login
                             </Link>
-                        </NextLink>
+                        </NextLink>)
+                        }
+                        
                     </div>
                 </Toolbar>
             </AppBar>
