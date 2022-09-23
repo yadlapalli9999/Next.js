@@ -31,7 +31,7 @@ export default function Login(){
          dispatch({type:'USER_LOGIN', payload:data})
          // dataSet = JSON.stringify(data);
          console.log(data)
-         Cookies.set('userInfo',data)
+         Cookies.set('userInfo',JSON.stringify(data))
          alert('success login')
          router.push(redirect || '/')
 
